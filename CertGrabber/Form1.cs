@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Windows.Forms;
 using System.Security.Cryptography.X509Certificates;
+using throwaway.Properties;
 
 
 namespace throwaway
@@ -25,32 +26,30 @@ namespace throwaway
                    ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
                    request = (HttpWebRequest) WebRequest.Create(textBox1.Text);
                    HttpWebResponse response = (HttpWebResponse) request.GetResponse();
-                   using (var responseStream = response.GetResponseStream())
-                   using (var responseReader = new StreamReader(responseStream))
-                   {
-                       var contents = responseReader.ReadToEnd();
-                   }
                    response.Close();
                    //retrieve the ssl cert and assign it to an X509Certificate object
-                   X509Certificate cert = request.ServicePoint.Certificate;
+                   var cert = request.ServicePoint.Certificate;
                    //convert the X509Certificate to an X509Certificate2 object by passing it into the constructor
-                   X509Certificate2 cert2 = new X509Certificate2(cert);
-                   //Display the Cert and give the user the option of grabbing or just exiting once they see the contents
-                   DialogResult dialogResult = MessageBox.Show("Cert Details = " + cert.Subject,
-                       "Grab the Cert?", MessageBoxButtons.YesNo);
-                   if (dialogResult == DialogResult.Yes)
+                   if (cert != null)
                    {
-                       //display the cert dialog box
-                       X509Certificate2UI.DisplayCertificate(cert2);
-                   }
-                   else if (dialogResult == DialogResult.No)
-                   {
-                       return;
+                       var cert2 = new X509Certificate2(cert);
+                       //Display the Cert and give the user the option of grabbing or just exiting once they see the contents
+                       var dialogResult = MessageBox.Show(Resources.Cert_Details + cert.Subject,
+                           Resources.Grab_the_Cert_, MessageBoxButtons.YesNo);
+                       switch (dialogResult)
+                       {
+                           case DialogResult.Yes:
+                               //display the cert dialog box
+                               X509Certificate2UI.DisplayCertificate(cert2);
+                               break;
+                           case DialogResult.No:
+                               return;
+                       }
                    }
                }
                 else
                 {
-                    MessageBox.Show("You must provide an https:// URL for the app to grab the cert");
+                    MessageBox.Show(Resources.NonHttpsMessage);
                 }
             }
         
@@ -64,7 +63,7 @@ namespace throwaway
                if (webResponse == null)
                {
                    MessageBox.Show(
-                       "We appear to have got a null response from the webserver this usually means we were redirected to a non secure http:// only site");
+                       Resources.HttpstoHttpRedirectMessage);
                     return;
                }
 
@@ -72,13 +71,16 @@ namespace throwaway
                {
                    webResponse.Close();
                    //retrieve the ssl cert and assign it to an X509Certificate object
-                   X509Certificate cert = request.ServicePoint.Certificate;
+                   var cert = request?.ServicePoint.Certificate;
                    //convert the X509Certificate to an X509Certificate2 object by passing it into the constructor
-                   X509Certificate2 cert2 = new X509Certificate2(cert);
-                   //display the cert dialog box
-                   X509Certificate2UI.DisplayCertificate(cert2);
+                   if (cert != null)
+                   {
+                       var cert2 = new X509Certificate2(cert);
+                       //display the cert dialog box
+                       X509Certificate2UI.DisplayCertificate(cert2);
+                   }
                }
-               MessageBox.Show("Cert Page gives 404 Error , we should still have been able to grab the Cert");
+               MessageBox.Show(Resources.Cert404StillGotCertMessage);
            }
         }
         }

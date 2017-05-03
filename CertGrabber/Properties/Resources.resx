@@ -114,4 +114,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Cert_Details" xml:space="preserve">
+    <value>Cert Details = </value>
+  </data>
+  <data name="Grab_the_Cert_" xml:space="preserve">
+    <value>Grab the Cert?</value>
+  </data>
+  <data name="NonHttpsMessage" xml:space="preserve">
+    <value>You must provide an https:// URL for the app to grab the cert</value>
+  </data>
+  <data name="HttpstoHttpRedirectMessage" xml:space="preserve">
+    <value>We appear to have got a null response from the webserver this usually means the URL is invalid or we were redirected to a non secure http:// only site</value>
+  </data>
+  <data name="Cert404StillGotCertMessage" xml:space="preserve">
+    <value>Cert Page gives 404 Error , we should still have been able to grab the Cert</value>
+  </data>
 </root>
